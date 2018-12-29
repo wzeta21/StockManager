@@ -7,7 +7,7 @@
 
 Para generar la base de datos siga los siguientes pasos
 
-    1.  dotnet ef migrations add chambareporterdb
+    1.  dotnet ef migrations add StockDB
     2.  dotnet ef database update
 
 ## Ejecucíon/construcción

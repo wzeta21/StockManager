@@ -184,6 +184,71 @@ namespace StockManager.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("StockManager.Data.Entities.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique()
+                        .HasName("idx_brand");
+
+                    b.ToTable("Brands");
+                });
+
+            modelBuilder.Entity("StockManager.Data.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique()
+                        .HasName("idx_category");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("StockManager.Data.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("BrandId");
+
+                    b.Property<int>("CategoryId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("ImageUrl");
+
+                    b.Property<string>("Name");
+
+                    b.Property<double>("SalePrice");
+
+                    b.Property<string>("Tags");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("Id")
+                        .IsUnique()
+                        .HasName("idx_product");
+
+                    b.ToTable("Products");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -226,6 +291,21 @@ namespace StockManager.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("StockManager.Data.Entities.Product", b =>
+                {
+                    b.HasOne("StockManager.Data.Entities.Brand", "Brands")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .HasConstraintName("fk_product_brands")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("StockManager.Data.Entities.Category", "Categories")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .HasConstraintName("fk_product_categories")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
