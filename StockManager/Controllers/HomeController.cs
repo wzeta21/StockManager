@@ -4,15 +4,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using StockManager.Data;
+using StockManager.Data.Entities;
+using StockManager.IServices;
 using StockManager.Models;
 
 namespace StockManager.Controllers
 {
     public class HomeController : Controller
     {
+        private IProductService productService;
+        public HomeController(IProductService pService){
+            this.productService = pService;
+        }
         public IActionResult Index()
         {
-            return View();
+            return View(productService.GetAll());
         }
 
         public IActionResult About()

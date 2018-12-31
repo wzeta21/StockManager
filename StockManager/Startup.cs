@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using StockManager.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StockManager.IServices;
+using StockManager.Service;
 
 namespace StockManager
 {
@@ -40,6 +42,7 @@ namespace StockManager
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<IProductService, ProductService>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
