@@ -4,41 +4,36 @@
 }
 
 <div class="panel panel-default black">
-  <div class="panel-heading">Productos</div>
-  <div class="panel-body">
-    <div class="row">
-        <i class="fas fa-search glyphicon" id="search" aria-hidden="true" id="search"></i>
-        <input type="search" id="search" value="" class="form-control form-control-sm ml-3 w-75 glyphicon glyphicon-search" 
-        placeholder="Search" aria-label="Search" aria-describedby="search">
+    <div class="panel-heading">Productos</div>
+    <div class="panel-body">
+        <div class="row">
+            <i class="fas fa-search glyphicon" id="search" aria-hidden="true" id="search"></i>
+            <input type="search" id="search" value="" class="form-control form-control-sm ml-3 w-75 glyphicon glyphicon-search"
+                   placeholder="Search" aria-label="Search" aria-describedby="search">
+        </div>
+        <br />
+        <div class="row">
+            <button type="button" id="add" class="btn btn-default btn-primary btn-block form-control form-control-sm ml-3 w-75">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Añadir producto
+            </button>
+        </div>
     </div>
-    <br/>
-    <div class="row">
-        <button type="button" id="add" class="btn btn-default btn-primary btn-block form-control form-control-sm ml-3 w-75">
-            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Añadir producto
-        </button>
-    </div>
-  </div>  
- 
-  <ul class="list-group">
-     @foreach (var item in Model)
-     {
-        <li class="list-group-item">@item.Name</li>
-     }
-  </ul>
+
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item">@item.Name</li>
+        }
+    </ul>
 </div>
 
 @section Scripts{
     <script type="text/javascript">
-   /* $( "#add" ).click(function() {
-        alert("Hola");
-        $( this ).slideUp();
-    });*/
-    $(document).ready(() =>{
-         //View Details Button
-            $("#add").click(function () {
-                var url = "/Home/Add"; 
-                window.location.href = url; 
+        $(document).ready(() => {
+            $("#add").click(() => {
+                var url = "/Home/Add";
+                window.location.href = url;
             });
-    });
+        });
     </script>
 }

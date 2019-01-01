@@ -16,7 +16,8 @@ namespace StockManager.Service
             this.db = db;
         }
         public bool Create(Product product)
-        {   bool response = false;
+        {
+            bool response = false;
             try
             {
                 db.Add(product);

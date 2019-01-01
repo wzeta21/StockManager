@@ -6,7 +6,7 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="Add">
+<form id="productForm" asp-action="AddProduct">
     <div class="form-group row">
         <label for="name" class="col-sm-2 col-form-label">*Nombre del producto</label>
         <div class="col-sm-10">
@@ -17,15 +17,23 @@
     <div class="form-group row">
         <div class="col-sm-2">*Categoria</div>
         <div class="col-sm-10">
-            <select asp-for="CategoryId" asp-items="@(new SelectList(@categories,"Id","Name"))" class="form-control"></select>
+            <select id="categoryId" asp-for="CategoryId" asp-items="@(new SelectList(@categories,"Id","Name"))" class="form-control"></select>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-sm-2">*Marca</div>
         <div class="col-sm-10">
-            <select asp-for="BrandId" asp-items="@(new SelectList(@brands,"Id","Name"))" class="form-control"></select>
+            <select id="brandId" asp-for="BrandId" asp-items="@(new SelectList(@brands,"Id","Name"))" class="form-control"></select>
         </div>
     </div>
+
+    <div class="form-group row">
+        <label for="salePrice" class="col-sm-2 col-form-label">*Pecio de venta</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="salePrice" asp-for="SalePrice">
+        </div>
+    </div>
+
     <div class="form-group row">
         <label for="description" class="col-sm-2 col-form-label">Descripción</label>
         <div class="col-sm-10">
@@ -44,13 +52,15 @@
         <div class="col-sm-10">
             <div class="row">
                 <div class="col-sm-6">
-                    <img id="picture" width="50%" height="50%" src="" asp-for="ImageUrl" />
+                    <img id="picture" width="25%" height="25%" src="" asp-for="ImageUrl" />
                 </div>
                 <div class="col-sm-6">
                     <label class="input-group-btn">
                         <span class="btn btn-primary">
                             Subir foto
-                            <input type="file" style="display: none;" name="selectPicture" id="selectPicture">
+                            <input type="file" style="display: none;" name="selectPicture" id="selectPicture"
+                                   accept="image/jpeg, image/png, image/gif"
+                                   asp-for="ImageUrl">
                         </span>
                     </label>
                 </div>
@@ -60,7 +70,7 @@
     </div>
     <div class="form-group row">
         <div class="col-sm-12">
-            <button type="submit" value="Add" class="btn btn-primary btn-block">Guardar</button>
+            <button type="submit" id="save" class="btn btn-primary btn-block">Guardar</button>
         </div>
     </div>
     <div class="form-group row">
@@ -73,25 +83,121 @@
 @section Scripts{
     <script type="text/javascript">
         $(document).ready(() => {
-            $(function () {
+            $(() => {
+                $('#save').click(() => {
+                    $('#productForm').submit(() => {
+                        //if ($('#productForm').valid()) {
+
+                        let formData = new FormData();
+                        const picture = $('#selectPicture')[0].files[0];
+                        formData.append('picture', picture, picture.name);
+            
+                        let product = {
+                            'Name': $('#name').val(),
+                            'Description': $('#name').val(),
+                            'Tags': $('#tags').val(),
+                            'SalePrice': Number($('#salePrice').val()),
+                            'CategoryId': Number($('#categoryId').val()),
+                            'BrandId': Number($('#brandId').val())
+                        };
+                        //const product = JSON.stringify($('#productForm').serialize());
+                        formData.append('product', JSON.stringify(product));
+                        console.log(product);
+
+                        $.ajax({
+                            data: formData,
+                            type: 'POST',
+                            method: 'POST',
+                            url: '/Home/AddProduct',
+                            dataType: 'json',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            headers: { 'RequestVerificationToken': getAntiForgeryToken({}) },
+                            success: (response) => {
+                                if (response != null && response.success) {
+                                    let formValidated = formData;
+                                    $.ajax({
+                                        data: formValidated,
+                                        type: 'POST',
+                                        method: 'POST',
+                                        url: '/Home/AddProduct',
+                                        dataType: 'json',
+                                        cache: false,
+                                        contentType: false,
+                                        processData: false,
+                                        headers: { 'RequestVerificationToken': getAntiForgeryToken({}) },
+                                        success: (result) => {
+                                            //$('#mainDiv').hide();
+                                            //$('#Congrats').show();
+                                        }
+                                    });
+                                    return true;
+                                }
+                                else if (response != null && !response.success) {
+                                    const errors = response['errors'];
+                                    //displayValidationErrors(errors);
+                                    //window.scrollTo(0, 0);
+                                }
+                                return false;
+                            },
+                            error: (response) => {
+                                // $('validationSummary').hide();
+                                return false;
+                            }
+                        });
+                        //}
+                        return false;
+                    });
+                });
+
                 $('#selectPicture').change((e) => {
                     addImage(e);
+                    getPicture(e);
                 });
 
                 function addImage(e) {
-                    var file = e.target.files[0],
+                    let file = e.target.files[0],
                         imageType = /image.*/;
 
                     if (!file.type.match(imageType))
                         return;
 
-                    var reader = new FileReader();
-                    reader.onload = (e) => {
-                        var result = e.target.result;
-                        $('#picture').attr("src", result);
-                    };
+                    let reader = new FileReader();
+                    reader.onload = (e) => $('#picture').attr("src", e.target.result);
+
                     reader.readAsDataURL(file);
                 }
+
+                function getPicture($event) {
+
+                    if ($event.target.files.length === 0) {
+                        //Materialize.toast('Seleccione una foto', 1200);
+                        return;
+                    }
+
+                    if ($event.target.files.length > 4) {
+                        //Materialize.toast('Se admite máximo 4 fotografias', 1200);
+                        $event.reset();
+                        return;
+                    }
+
+                    let picture = $event.target.files[0];
+
+                    const render = new FileReader();
+                    render.onload = (ev) => {
+                        const photograf = {};
+                        photograf.name = picture.name;
+                        photograf.type = picture.type;
+                        photograf.photograf = btoa(ev.target.result);
+                    };
+                    render.readAsBinaryString(picture);
+                }
+
+                function getAntiForgeryToken() {
+                    token = $('input[name=__RequestVerificationToken]').val();
+                    return token;
+                };
             });
         });
     </script>
