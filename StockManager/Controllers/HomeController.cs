@@ -14,21 +14,34 @@ namespace StockManager.Controllers
     public class HomeController : Controller
     {
         private IProductService productService;
-        public HomeController(IProductService pService){
+        private ICategoryService categoryService;
+        private IBrandService brandService;
+        public HomeController(IProductService pService, ICategoryService categoryService, IBrandService brandService)
+        {
             this.productService = pService;
+            this.categoryService = categoryService;
+            this.brandService = brandService;
         }
         public IActionResult Index()
         {
             return View(productService.GetAll());
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Add(Product product){
+            if(ModelState.IsValid){
+                this.productService.Create(product);
+                return RedirectToAction("Add");
+            }
             return View();
         }
-
+        public IActionResult Add()
+        {
+            ViewData["brands"] = brandService.GetAll();
+            ViewData["categories"] = categoryService.GetAll();
+            return View();
+        }
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";

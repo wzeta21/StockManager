@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
@@ -5,16 +6,28 @@ using StockManager.Data;
 using StockManager.Data.Entities;
 using StockManager.IServices;
 
-namespace StockManager.Service{
+namespace StockManager.Service
+{
     public class ProductService : IProductService
     {
         private ApplicationDbContext db;
-        public ProductService(ApplicationDbContext db){
+        public ProductService(ApplicationDbContext db)
+        {
             this.db = db;
         }
         public bool Create(Product product)
-        {
-            throw new System.NotImplementedException();
+        {   bool response = false;
+            try
+            {
+                db.Add(product);
+                db.SaveChanges();
+                response = true;
+            }
+            catch (System.Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return response;
         }
 
         public Product Get(Product product)

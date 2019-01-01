@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using StockManager.Data.Entities;
 
-namespace StockManager.IServices{
+namespace StockManager.IServices
+{
     public interface IProductService
     {
         IEnumerable<Product> GetAll();

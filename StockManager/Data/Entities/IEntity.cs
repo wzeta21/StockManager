@@ -1,6 +1,7 @@
-namespace StockManager.Data.Entities{
-    public interface IEntity  
-    {  
-        int Id { get; set; }  
-    }  
+namespace StockManager.Data.Entities
+{
+    public interface IEntity
+    {
+        int Id { get; set; }
+    }
 }
