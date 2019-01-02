@@ -77,11 +77,40 @@ namespace StockManager.Controllers
             }
             return View();
         }
-        public IActionResult Contact()
+        public IActionResult Edit(int id)
         {
-            ViewData["Message"] = "Your contact page.";
+            ViewData["Message"] = "Edit";
 
-            return View();
+            ViewData["brands"] = brandService.GetAll();
+            ViewData["categories"] = categoryService.GetAll();
+
+            Product product = new Product();
+            if (ModelState.IsValid){
+               product = this.productService.GetById(id);
+            }
+            return View(product);
+        }
+
+        [HttpPost]
+        [RequestSizeLimit(90_000_000)]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit()
+        {
+            bool res = false;
+            var picturePostedFile = HttpContext.Request.Form.Files.GetFile("picture");
+            string pictureUrl = this.SavePicture(picturePostedFile);
+
+            var repo = HttpContext.Request.Form["product"];
+
+            Product product = JsonConvert.DeserializeObject<Product>(repo);
+
+            if (ModelState.IsValid && pictureUrl != null)
+            {
+                product.ImageUrl = pictureUrl;
+                res = this.productService.Update(product);
+                return RedirectToAction("Add");
+            }
+            return View(product);
         }
 
         public IActionResult Privacy()

@@ -1,12 +1,13 @@
 ﻿@model StockManager.Data.Entities.Product
 @{
-    ViewData["Title"] = "Nuevo producto";
+    ViewData["Title"] = "Editar producto";
     var brands = (IEnumerable<StockManager.Data.Entities.Brand>)ViewData["brands"];
     var categories = (IEnumerable<StockManager.Data.Entities.Category>)ViewData["categories"];
 }
 <h2>@ViewData["Title"]</h2>
 
-<form id="productForm" asp-action="AddProduct">
+<form id="productForm" asp-action="Edit">
+    <input type="hidden" class="form-control" id="id" asp-for="Id" hidden>
     <div class="form-group row">
         <label for="name" class="col-sm-2 col-form-label">*Nombre del producto</label>
         <div class="col-sm-10">
@@ -52,7 +53,7 @@
         <div class="col-sm-10">
             <div class="row">
                 <div class="col-sm-6">
-                    <img id="picture" width="25%" height="25%" src="" asp-for="ImageUrl" />
+                    <img id="picture" width="25%" height="25%" src="@Url.Content(Model.ImageUrl)" asp-for="ImageUrl" />
                 </div>
                 <div class="col-sm-6">
                     <label class="input-group-btn">
@@ -92,6 +93,7 @@
                         formData.append('picture', picture, picture.name);
 
                         let product = {
+                            'Id': Number($('#id').val()),
                             'Name': $('#name').val(),
                             'Description': $('#description').val(),
                             'Tags': $('#tags').val(),
@@ -104,7 +106,7 @@
                             data: formData,
                             type: 'POST',
                             method: 'POST',
-                            url: '/Home/AddProduct',
+                            url: '/Home/Edit',
                             dataType: 'json',
                             cache: false,
                             contentType: false,
@@ -117,7 +119,7 @@
                                         data: formValidated,
                                         type: 'POST',
                                         method: 'POST',
-                                        url: '/Home/AddProduct',
+                                        url: '/Home/Edit',
                                         dataType: 'json',
                                         cache: false,
                                         contentType: false,
@@ -136,7 +138,6 @@
                                 return false;
                             }
                         });
-                       
                         return false;
                     });
                 });

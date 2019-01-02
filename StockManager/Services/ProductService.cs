@@ -42,7 +42,7 @@ namespace StockManager.Service
                 response = true;
             }
             catch (Exception ex)
-            {                
+            {
                 throw new Exception(ex.Message);
             }
             return response;
@@ -68,7 +68,22 @@ namespace StockManager.Service
 
         public bool Update(Product product)
         {
-            throw new System.NotImplementedException();
+            bool response = false;
+            try
+            {
+                Product productFound = db.Products.AsNoTracking().FirstOrDefault(x => x.Id == product.Id);
+                if (productFound != null)
+                {
+                    db.Entry(productFound).Context.Update(product);
+                    db.SaveChanges();
+                    response = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return response;
         }
     }
 }

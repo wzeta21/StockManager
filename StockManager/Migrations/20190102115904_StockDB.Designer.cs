@@ -10,7 +10,7 @@ using StockManager.Data;
 namespace StockManager.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181229222120_StockDB")]
+    [Migration("20190102115904_StockDB")]
     partial class StockDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
