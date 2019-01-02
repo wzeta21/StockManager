@@ -22,18 +22,94 @@
     <ul class="list-group">
         @foreach (var item in Model)
         {
-            <li class="list-group-item">@item.Name</li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-sm-11">
+                        @item.Name
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" id="options" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <button type="button" id="edit" value="@item.Id" class="btn btn-default">Editar</button>
+                            </li>
+                            <li>
+                                <button type="button" id="delete" value="@item.Id" class="btn btn-default"
+                                        onclick="showModal(@item.Id)">
+                                    Eliminar
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
         }
     </ul>
+
 </div>
 
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">¿Estas seguro que deseas eliminar?</h5>
+            </div>
+            <div class="modal-body">
+                Al eliminar se perderán los datos guardados de ese producto
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" id="deleteConfirmed" value="" class="btn btn-primary">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts{
     <script type="text/javascript">
         $(document).ready(() => {
-            $("#add").click(() => {
-                var url = "/Home/Add";
+            $('#add').click(() => {
+                var url = '/Home/Add';
                 window.location.href = url;
             });
+
+            $('#deleteConfirmed').click((e) => {
+                const productId = e.target.value;
+                $.ajax({
+                    data: {id:productId},
+                    type: 'POST',
+                    method: 'POST',
+                    url: '/Home/Delete',
+                    dataType: 'json',
+                    success: (response) => {
+                        if (response != null && response.success) {
+                            let formValidated = {id:productId};
+                            $.ajax({
+                                data: formValidated,
+                                type: 'POST',
+                                method: 'POST',
+                                url: '/Home/Delete',
+                                dataType: 'json',
+                                success: (result) => { }
+                            });
+                            return true;
+                        }
+                        else if (response != null && !response.success) {
+                            const errors = response['errors'];
+                        }
+                        return false;
+                    },
+                    error: (response) => {
+                        return false;
+                    }
+                });
+            });
         });
+
+        function showModal($event) {
+            $("#deleteConfirmed").val($event);
+            $('#deleteModal').modal('show');
+        }
     </script>
 }

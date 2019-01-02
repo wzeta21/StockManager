@@ -57,12 +57,24 @@ namespace StockManager.Controllers
                 res = this.productService.Create(product);
                 return RedirectToAction("Add");
             }
-            return View();
+            return View(product);
         }
         public IActionResult Add()
         {
             ViewData["brands"] = brandService.GetAll();
             ViewData["categories"] = categoryService.GetAll();
+            return View();
+        }
+
+        [HttpPost]
+        
+        public IActionResult Delete(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                this.productService.Delete(id);
+                return RedirectToAction("Index");
+            }
             return View();
         }
         public IActionResult Contact()
@@ -95,7 +107,7 @@ namespace StockManager.Controllers
                 .ToArray()
             );
             pictureName = pictureName + Path.GetExtension(picture.FileName);
-            string picturePath ="/mitienda/products/ropa/" + pictureName;
+            string picturePath = "/mitienda/products/ropa/" + pictureName;
             var filePath = hostingEvironmento.WebRootPath + picturePath;
             using (var stream = new FileStream(filePath, FileMode.Create))
             {

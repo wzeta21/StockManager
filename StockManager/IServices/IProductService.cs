@@ -10,5 +10,6 @@ namespace StockManager.IServices
         Product Get(Product product);
         bool Create(Product product);
         bool Update(Product product);
+        bool Delete(int id);
     }
 }

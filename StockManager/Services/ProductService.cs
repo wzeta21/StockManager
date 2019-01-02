@@ -31,6 +31,23 @@ namespace StockManager.Service
             return response;
         }
 
+        public bool Delete(int id)
+        {
+            bool response = false;
+            try
+            {
+                Product product = db.Products.FirstOrDefault(x => x.Id == id);
+                db.Products.Remove(product);
+                db.SaveChanges();
+                response = true;
+            }
+            catch (Exception ex)
+            {                
+                throw new Exception(ex.Message);
+            }
+            return response;
+        }
+
         public Product Get(Product product)
         {
             throw new System.NotImplementedException();

@@ -10,7 +10,7 @@
     <div class="form-group row">
         <label for="name" class="col-sm-2 col-form-label">*Nombre del producto</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="name" asp-for="Name">
+            <input type="text" class="form-control" id="name" asp-for="Name" min="3" max="100" required>
         </div>
     </div>
 
@@ -30,7 +30,7 @@
     <div class="form-group row">
         <label for="salePrice" class="col-sm-2 col-form-label">*Pecio de venta</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="salePrice" asp-for="SalePrice">
+            <input type="text" class="form-control" id="salePrice" asp-for="SalePrice" required>
         </div>
     </div>
 
@@ -43,7 +43,7 @@
     <div class="form-group row">
         <label for="tags" class="col-sm-2 col-form-label">*Tags</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="tags" asp-for="Tags">
+            <input type="text" class="form-control" id="tags" asp-for="Tags" min="3" required>
         </div>
     </div>
 
@@ -91,7 +91,7 @@
                         let formData = new FormData();
                         const picture = $('#selectPicture')[0].files[0];
                         formData.append('picture', picture, picture.name);
-            
+
                         let product = {
                             'Name': $('#name').val(),
                             'Description': $('#name').val(),
@@ -100,10 +100,7 @@
                             'CategoryId': Number($('#categoryId').val()),
                             'BrandId': Number($('#brandId').val())
                         };
-                        //const product = JSON.stringify($('#productForm').serialize());
                         formData.append('product', JSON.stringify(product));
-                        console.log(product);
-
                         $.ajax({
                             data: formData,
                             type: 'POST',
@@ -127,22 +124,16 @@
                                         contentType: false,
                                         processData: false,
                                         headers: { 'RequestVerificationToken': getAntiForgeryToken({}) },
-                                        success: (result) => {
-                                            //$('#mainDiv').hide();
-                                            //$('#Congrats').show();
-                                        }
+                                        success: (result) => { }
                                     });
                                     return true;
                                 }
                                 else if (response != null && !response.success) {
                                     const errors = response['errors'];
-                                    //displayValidationErrors(errors);
-                                    //window.scrollTo(0, 0);
                                 }
                                 return false;
                             },
                             error: (response) => {
-                                // $('validationSummary').hide();
                                 return false;
                             }
                         });
@@ -153,7 +144,6 @@
 
                 $('#selectPicture').change((e) => {
                     addImage(e);
-                    getPicture(e);
                 });
 
                 function addImage(e) {
@@ -167,31 +157,6 @@
                     reader.onload = (e) => $('#picture').attr("src", e.target.result);
 
                     reader.readAsDataURL(file);
-                }
-
-                function getPicture($event) {
-
-                    if ($event.target.files.length === 0) {
-                        //Materialize.toast('Seleccione una foto', 1200);
-                        return;
-                    }
-
-                    if ($event.target.files.length > 4) {
-                        //Materialize.toast('Se admite máximo 4 fotografias', 1200);
-                        $event.reset();
-                        return;
-                    }
-
-                    let picture = $event.target.files[0];
-
-                    const render = new FileReader();
-                    render.onload = (ev) => {
-                        const photograf = {};
-                        photograf.name = picture.name;
-                        photograf.type = picture.type;
-                        photograf.photograf = btoa(ev.target.result);
-                    };
-                    render.readAsBinaryString(picture);
                 }
 
                 function getAntiForgeryToken() {
